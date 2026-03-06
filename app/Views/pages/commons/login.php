@@ -37,13 +37,20 @@
                                 </div>
                                 <div class="m-sm-4">
                                     <form action="<?= base_url('login'); ?>" method="POST">
+                                        <?= csrf_field() ?>
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input class="form-control form-control-lg" type="email" name="inputEmail" placeholder="Enter your email" />
+                                            <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" value="<?= old('email') ?>" />
+                                            <?php if (isset($validation) && $validation->hasError('email')): ?>
+                                                <div class="text-danger"><?= $validation->getError('email') ?></div>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Password</label>
-                                            <input class="form-control form-control-lg" type="password" name="inputPassword" placeholder="Enter your password" />
+                                            <input class="form-control form-control-lg" type="password" name="password" placeholder="Enter your password" />
+                                            <?php if (isset($validation) && $validation->hasError('password')): ?>
+                                                <div class="text-danger"><?= $validation->getError('password') ?></div>
+                                            <?php endif; ?>
                                             <small>
                                                 <a href="<?= base_url('register') ?>">Don't have an account? Register</a>
                                             </small>

@@ -8,6 +8,11 @@ class CreateStudentsTable extends Migration
 {
     public function up()
     {
+        // Skip if table already exists
+        if ($this->db->tableExists('students')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
@@ -32,7 +37,7 @@ class CreateStudentsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('students');
+        $this->forge->createTable('students', true);
     }
 
     public function down()

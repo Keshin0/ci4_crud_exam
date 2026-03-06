@@ -7,15 +7,15 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Auth::index');
 $routes->get('login', 'Auth::index');
-$routes->post('login', 'Auth::index');
+$routes->post('login', 'Auth::login');
 $routes->get('logout', 'Auth::logout');
 $routes->get('blocked', 'Auth::forbiddenPage');
 $routes->get('register', 'Auth::register');
-$routes->post('register', 'Auth::registration');
+$routes->post('register', 'Auth::storeRegister');
 
-$routes->get('dashboard', 'Home::index');
-$routes->get('dashboard-v2', 'Home::dashboardV2');
-$routes->get('dashboard-v3', 'Home::dashboardV3');
+$routes->get('dashboard', 'Home::index', ['filter' => 'isLoggedIn']);
+$routes->get('dashboard-v2', 'Home::dashboardV2', ['filter' => 'isLoggedIn']);
+$routes->get('dashboard-v3', 'Home::dashboardV3', ['filter' => 'isLoggedIn']);
 
 // Setting Routes
 $routes->group('users', static function ($routes) {
@@ -47,4 +47,9 @@ $routes->get('students', 'Student::index');
 $routes->post('student/store', 'Student::store');
 $routes->delete('student/delete/(:num)', 'Student::delete/$1');
 
+// Records CRUD Routes (RESTful Resource)
+$routes->get('records/dashboard', 'Records::dashboard', ['filter' => 'isLoggedIn|isGranted']);
+$routes->resource('records');
+
+// Computers CRUD Routes (RESTful Resource)
 $routes->resource('computers');

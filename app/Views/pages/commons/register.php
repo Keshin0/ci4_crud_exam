@@ -30,6 +30,7 @@
 
                         <div class="card">
                             <form action="<?= base_url('register'); ?>" method="POST">
+                                <?= csrf_field() ?>
                                 <div class="card-body">
                                     <?= $this->include('components/alerts'); ?>
 
@@ -39,27 +40,33 @@
                                     </div>
 
                                     <div class="m-sm-4">
-                                        <!-- 
-                                            <div class="text-center">
-                                                <img src="" alt="Charles Hall" class="img-fluid rounded-circle" width="132" height="132" />
-                                            </div>
-                                         -->
                                         <div class="mb-3">
                                             <label class="form-label">Full Name</label>
-                                            <input class="form-control form-control-lg" type="text" name="inputFullname" placeholder="Enter your name" required />
+                                            <input class="form-control form-control-lg" type="text" name="name" placeholder="Enter your name" value="<?= old('name') ?>" required />
+                                            <?php if (isset($validation) && $validation->hasError('name')): ?>
+                                                <div class="text-danger"><?= $validation->getError('name') ?></div>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input class="form-control form-control-lg" type="email" name="inputEmail" placeholder="Enter your email" required />
+                                            <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" value="<?= old('email') ?>" required />
+                                            <?php if (isset($validation) && $validation->hasError('email')): ?>
+                                                <div class="text-danger"><?= $validation->getError('email') ?></div>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Password</label>
-                                            <input class="form-control form-control-lg" type="password" name="inputPassword" placeholder="Enter your password" required />
-
+                                            <input class="form-control form-control-lg" type="password" name="password" placeholder="Enter your password" required />
+                                            <?php if (isset($validation) && $validation->hasError('password')): ?>
+                                                <div class="text-danger"><?= $validation->getError('password') ?></div>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Repeat Password</label>
-                                            <input class="form-control form-control-lg" type="password" name="inputPassword2" placeholder="Repeat your password" required />
+                                            <label class="form-label">Confirm Password</label>
+                                            <input class="form-control form-control-lg" type="password" name="confirm_password" placeholder="Repeat your password" required />
+                                            <?php if (isset($validation) && $validation->hasError('confirm_password')): ?>
+                                                <div class="text-danger"><?= $validation->getError('confirm_password') ?></div>
+                                            <?php endif; ?>
                                             <small>
                                                 <a href="<?= base_url() ?>">Have an account? Login</a>
                                             </small>

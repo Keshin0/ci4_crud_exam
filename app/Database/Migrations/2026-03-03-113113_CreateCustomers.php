@@ -8,26 +8,14 @@ class CreateCustomers extends Migration
 {
     public function up()
     {
-        $this->forge->addField([
-            'id' => [
-                'type' => 'INT',
-                'unsigned' => true,
-                'auto_increment' => true,
-            ],
-            'name' => [
-                'type' => 'VARCHAR',
-                'constraint' => 100,
-            ],
-            'contact_number' => [
-                'type' => 'VARCHAR',
-                'constraint' => 20,
-                'null' => true,
-            ],
-            'created_at DATETIME default CURRENT_TIMESTAMP'
-        ]);
-
-        $this->forge->addKey('id', true);
-        $this->forge->createTable('customers');
+        // Use raw SQL with IF NOT EXISTS to prevent errors
+        $this->db->query('CREATE TABLE IF NOT EXISTS `customers` (
+            `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(100) NOT NULL,
+            `contact_number` VARCHAR(20),
+            `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT `pk_customers` PRIMARY KEY(`id`)
+        ) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci');
     }
 
     public function down()

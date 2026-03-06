@@ -6,6 +6,16 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 
+/**
+ * Authentication Filter
+ * 
+ * This filter checks if a user is authenticated (has a valid session).
+ * If the user is not logged in, they are redirected to the home page.
+ * 
+ * This filter is applied globally to all routes except those specified
+ * in the Filters configuration, ensuring that protected routes can only
+ * be accessed by authenticated users.
+ */
 class Authentication implements FilterInterface
 {
     /**
@@ -25,9 +35,11 @@ class Authentication implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (session()->get('isLoggedIn') != TRUE) :
+        // Check if user is authenticated
+        if (session()->get('isLoggedIn') !== true) {
+            // Redirect unauthenticated users to home page
             return redirect()->to(base_url('/'));
-        endif;
+        }
     }
 
     /**
@@ -44,6 +56,6 @@ class Authentication implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        //
+        // No post-processing needed
     }
 }

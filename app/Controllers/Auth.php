@@ -7,83 +7,105 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class Auth extends BaseController
 {
+    protected $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = model('UserModel');
+    }
+
     public function index()
     {
-        if (session()->get('isLoggedIn') == TRUE) {
-            return redirect()->to(base_url('dashboard'));
+        if (session()->get('isLoggedIn')) {
+            return redirect()->to('/dashboard');
         }
 
-        if (!$this->validate(['inputEmail'  => 'required'])) {
-            return view('pages/commons/login');
+        return view('pages/commons/login');
+    }
+
+    public function login()
+    {
+        if (session()->get('isLoggedIn')) {
+            return redirect()->to('/dashboard');
+        }
+
+        $rules = [
+            'email' => 'required|valid_email',
+            'password' => 'required'
+        ];
+
+        if (!$this->validate($rules)) {
+            return view('pages/commons/login', ['validation' => $this->validator]);
+        }
+
+        $email = $this->request->getPost('email');
+        $password = $this->request->getPost('password');
+
+        $user = $this->userModel->where('email', $email)->first();
+
+        if ($user && password_verify($password, $user['password'])) {
+            session()->set([
+                'user_id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'isLoggedIn' => true
+            ]);
+            return redirect()->to('/dashboard')->with('success', 'Login successful');
         } else {
-            $inputEmail     = htmlspecialchars($this->request->getVar('inputEmail', FILTER_UNSAFE_RAW));
-            $inputPassword  = htmlspecialchars($this->request->getVar('inputPassword', FILTER_UNSAFE_RAW));
-            $user           = $this->ApplicationModel->getUser(username: $inputEmail);
-            if ($user) {
-                $password        = $user['password'];
-                $verify = password_verify($inputPassword, $password);
-                if ($verify) {
-                    session()->set([
-                        'username'        => $user['username'],
-                        'role'            => $user['role'],
-                        'isLoggedIn'     => TRUE
-                    ]);
-                    return redirect()->to(base_url('dashboard'));
-                } else {
-                    session()->setFlashdata('notif_error', '<b>Your ID or Password is Wrong !</b> ');
-                    return redirect()->to(base_url());
-                }
-            } else {
-                session()->setFlashdata('notif_error', '<b>Your ID or Password is Wrong!</b> ');
-                return redirect()->to(base_url());
-            }
+            session()->setFlashdata('error', 'Invalid email or password');
+            return redirect()->back()->withInput();
         }
-    }
-    public function logout()
-    {
-        $this->session->destroy();
-        return redirect()->to(base_url('/'));
-    }
-
-    public function forbiddenPage()
-    {
-        $data = array_merge($this->data, [
-            'title'         => 'Forbidden Page'
-        ]);
-        return view('pages/commons/forbidden', $data);
     }
 
     public function register()
     {
+        if (session()->get('isLoggedIn')) {
+            return redirect()->to('/dashboard');
+        }
+
         return view('pages/commons/register');
     }
 
-    public function registration()
+    public function storeRegister()
     {
-        if (!$this->validate([
-            'inputEmail'     => ['label' => 'Email', 'rules' => 'is_unique[users.username]'],
-            'inputPassword'  => ['label' => 'Password', 'rules' => 'required'],
-            'inputPassword2' => ['label' => 'Password Confirmation', 'rules' => 'matches[inputPassword]'],
-        ])) {
-            $data = array_merge($this->data, [
-                'title'         => 'Register Page',
-            ]);
+        $rules = [
+            'name' => 'required|min_length[3]',
+            'email' => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|min_length[6]',
+            'confirm_password' => 'required|matches[password]'
+        ];
 
-            session()->setFlashdata('notif_error', $this->validation->getError('inputPassword2') . ' ' . $this->validation->getError('inputEmail'));
-            return view('pages/commons/register', $data);
-        } else {
-            $inputFullname = htmlspecialchars($this->request->getVar('inputFullname', FILTER_UNSAFE_RAW));
-            $inputEmail    = htmlspecialchars($this->request->getVar('inputEmail', FILTER_UNSAFE_RAW));
-            $inputPassword = htmlspecialchars($this->request->getVar('inputPassword', FILTER_UNSAFE_RAW));
-            $dataUser      = [
-                'inputFullname' => $inputFullname,
-                'inputUsername' => $inputEmail,
-                'inputPassword' => $inputPassword,
-                'inputRole'     => 1
-            ];
-            $this->ApplicationModel->createUser($dataUser);
-            session()->setFlashdata('notif_success', '<b>Registration Successfully!</b> Please login with your account.');
-            return view('pages/commons/login');
+        if (!$this->validate($rules)) {
+            return view('pages/commons/register', ['validation' => $this->validator]);
         }
+
+        $data = [
+            'name' => $this->request->getPost('name'),
+            'email' => $this->request->getPost('email'),
+            'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT)
+        ];
+
+        if ($this->userModel->insert($data)) {
+            session()->setFlashdata('success', 'Registration successful. Please login.');
+            return redirect()->to('/login');
+        } else {
+            session()->setFlashdata('error', 'Registration failed. Please try again.');
+            return redirect()->back()->withInput();
+        }
+    }
+
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to('/login');
+    }
+
+    /**
+     * Display forbidden/blocked page
+     * Shown when user doesn't have permission to access a resource
+     */
+    public function forbiddenPage()
+    {
+        return view('pages/commons/forbidden');
     }
 }

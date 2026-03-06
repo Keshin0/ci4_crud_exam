@@ -73,8 +73,15 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
+            // isLoggedIn filter: Protect all routes except public authentication routes
+            // Redirects unauthenticated users to home page (/)
+            // Logout requires authentication to prevent user confusion
             'isLoggedIn' => ['except' => ['/', 'register', 'login']],
-            'isGranted'  => ['except' => ['/', 'register', 'login', 'logout', 'blocked', 'dashboard', 'dashboard-v2', 'dashboard-v3', 'students', 'student/*']],
+            
+            // isGranted filter: Check user permissions on protected routes
+            // Redirects users without permission to /blocked page
+            // Records, students are allowed for logged-in users
+            'isGranted'  => ['except' => ['/', 'register', 'login', 'logout', 'blocked', 'dashboard', 'dashboard-v2', 'dashboard-v3', 'records', 'records/*', 'students', 'student/*']],
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',

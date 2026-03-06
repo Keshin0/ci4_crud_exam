@@ -8,6 +8,11 @@ class Session extends Migration
 {
     public function up()
     {
+        // Skip if table already exists
+        if ($this->db->tableExists('sessions')) {
+            return;
+        }
+
         $this->forge->addField([
             'id'          => [
                 'type'           => 'VARCHAR',
@@ -26,7 +31,7 @@ class Session extends Migration
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addKey('timestamp', true);
-        $this->forge->createTable('sessions');
+        $this->forge->createTable('sessions', true);
     }
 
     public function down()

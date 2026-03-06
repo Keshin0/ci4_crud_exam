@@ -13,6 +13,71 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<!-- Welcome Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card bg-primary text-white border-0 shadow-sm">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="card-title mb-1">Welcome, <?= esc(session()->get('name')) ?>!</h3>
+                        <p class="card-text mb-0">You're logged in as <strong><?= esc(session()->get('email')) ?></strong>. Start managing your data below.</p>
+                    </div>
+                    <div class="col-auto">
+                        <i data-feather="smile" style="width: 48px; height: 48px; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Access Cards -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
+            <div class="card-body text-center">
+                <i data-feather="list" style="width: 40px; height: 40px; color: #0d6efd; margin-bottom: 15px;"></i>
+                <h5 class="card-title">Records</h5>
+                <p class="card-text text-muted small">Manage all your records with full CRUD operations</p>
+                <a href="<?= base_url('records') ?>" class="btn btn-primary btn-sm">Manage Records</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
+            <div class="card-body text-center">
+                <i data-feather="users" style="width: 40px; height: 40px; color: #198754; margin-bottom: 15px;"></i>
+                <h5 class="card-title">Students</h5>
+                <p class="card-text text-muted small">View and manage student information</p>
+                <a href="<?= base_url('students') ?>" class="btn btn-success btn-sm">Manage Students</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
+            <div class="card-body text-center">
+                <i data-feather="settings" style="width: 40px; height: 40px; color: #fd7e14; margin-bottom: 15px;"></i>
+                <h5 class="card-title">Settings</h5>
+                <p class="card-text text-muted small">Configure user roles and permissions</p>
+                <a href="<?= base_url('users') ?>" class="btn btn-warning btn-sm">Settings</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
+            <div class="card-body text-center">
+                <i data-feather="log-out" style="width: 40px; height: 40px; color: #dc3545; margin-bottom: 15px;"></i>
+                <h5 class="card-title">Logout</h5>
+                <p class="card-text text-muted small">Sign out of your account safely</p>
+                <a href="<?= base_url('logout') ?>" class="btn btn-danger btn-sm">Sign Out</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<h5 class="mb-3">Dashboard Statistics</h5>
 <div class="row">
     <div class="col-lg-3 col-6">
         <div class="small-box text-bg-primary">

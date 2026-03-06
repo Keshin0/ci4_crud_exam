@@ -4,19 +4,27 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UserModel extends Model
+/**
+ * RecordModel
+ * 
+ * Handles all database operations for the records table.
+ * Uses SOFT DELETE: Records are never permanently deleted, only marked with deleted_at timestamp.
+ * This allows for data recovery and audit trails.
+ */
+class RecordModel extends Model
 {
-    protected $table            = 'users';
+    protected $table            = 'records';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    
+    // SOFT DELETE CONFIGURATION
+    // When delete() is called, instead of removing the record, this sets the deleted_at timestamp
+    // The model will automatically exclude soft-deleted records from queries
+    protected $useSoftDeletes   = true;
+    
     protected $protectFields    = true;
-    protected $allowedFields    = [
-        'name','email',
-        'password',
-        'created_at',
-    ];
+    protected $allowedFields    = ['title', 'description', 'status', 'user_id'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -29,7 +37,7 @@ class UserModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+    protected $deletedField  = 'deleted_at';  // Field used for soft deletes
 
     // Validation
     protected $validationRules      = [];
