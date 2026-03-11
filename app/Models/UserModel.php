@@ -13,9 +13,12 @@ class UserModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'name','email',
+        'name', 'fullname', 'email',
         'password',
         'created_at',
+        'student_id',
+        'course', 'year_level', 'section', 'phone',
+        'address', 'profile_image',
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -47,4 +50,9 @@ class UserModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function updateProfile(int $userId, array $data): bool
+    {
+        return $this->update($userId, $data);
+    }
 }

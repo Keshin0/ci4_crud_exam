@@ -186,8 +186,8 @@
                 <ul class="navbar-nav ms-auto">
                     <?php if (session()->get('isLoggedIn')): ?>
                         <li class="nav-item">
-                            <a class="nav-link <?= current_url() === base_url() ? 'active' : '' ?>" href="<?= base_url('/') ?>">
-                                <i data-feather="home" style="width: 18px; height: 18px; margin-right: 5px;"></i>Home
+                            <a class="nav-link <?= strpos(current_url(), '/dashboard') !== false ? 'active' : '' ?>" href="<?= base_url('dashboard') ?>">
+                                <i data-feather="grid" style="width: 18px; height: 18px; margin-right: 5px;"></i>Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
@@ -201,8 +201,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?= strpos(current_url(), '/dashboard') !== false ? 'active' : '' ?>" href="<?= base_url('dashboard') ?>">
-                                <i data-feather="grid" style="width: 18px; height: 18px; margin-right: 5px;"></i>Dashboard
+                            <a class="nav-link <?= strpos(current_url(), '/profile') !== false ? 'active' : '' ?>" href="<?= base_url('profile') ?>">
+                                <i data-feather="user" style="width: 18px; height: 18px; margin-right: 5px;"></i>Profile
                             </a>
                         </li>
                         

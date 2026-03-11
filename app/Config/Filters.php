@@ -80,8 +80,8 @@ class Filters extends BaseFilters
             
             // isGranted filter: Check user permissions on protected routes
             // Redirects users without permission to /blocked page
-            // Records, students are allowed for logged-in users
-            'isGranted'  => ['except' => ['/', 'register', 'login', 'logout', 'blocked', 'dashboard', 'dashboard-v2', 'dashboard-v3', 'records', 'records/*', 'students', 'student/*']],
+            // Records, students, profile are allowed for logged-in users
+            'isGranted'  => ['except' => ['/', 'register', 'login', 'logout', 'blocked', 'dashboard', 'dashboard-v2', 'dashboard-v3', 'records', 'records/*', 'students', 'student/*', 'profile', 'profile/*']],
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',

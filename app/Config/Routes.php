@@ -17,6 +17,11 @@ $routes->get('dashboard', 'Home::index', ['filter' => 'isLoggedIn']);
 $routes->get('dashboard-v2', 'Home::dashboardV2', ['filter' => 'isLoggedIn']);
 $routes->get('dashboard-v3', 'Home::dashboardV3', ['filter' => 'isLoggedIn']);
 
+// Profile Routes
+$routes->get('profile', 'ProfileController::show', ['filter' => 'isLoggedIn']);
+$routes->get('profile/edit', 'ProfileController::edit', ['filter' => 'isLoggedIn']);
+$routes->post('profile/update', 'ProfileController::update', ['filter' => 'isLoggedIn']);
+
 // Setting Routes
 $routes->group('users', static function ($routes) {
     $routes->get('/', 'Settings::users');

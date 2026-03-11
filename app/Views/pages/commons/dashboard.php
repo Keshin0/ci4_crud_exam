@@ -1,236 +1,368 @@
 <?= $this->extend('layouts/main') ?>
 
-<?= $this->section('breadcrumb') ?>
-<div class="row">
-    <div class="col-sm-6"><h3 class="mb-0">Dashboard</h3></div>
-    <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-end">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-        </ol>
-    </div>
-</div>
+<?= $this->section('title') ?>Dashboard<?= $this->endSection() ?>
+
+<?= $this->section('styles') ?>
+<style>
+    body {
+        background: #fafbfc;
+    }
+    
+    .dash-wrap {
+        padding: 25px 15px;
+    }
+    
+    .page-head {
+        margin-bottom: 28px;
+    }
+    
+    .page-head h2 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 4px;
+    }
+    
+    .page-head p {
+        color: #7f8c8d;
+        font-size: 15px;
+    }
+    
+    .stats-row {
+        margin-bottom: 25px;
+    }
+    
+    .stat-box {
+        background: white;
+        padding: 22px 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        margin-bottom: 18px;
+        border-top: 3px solid #3498db;
+    }
+    
+    .stat-box.green-top {
+        border-top-color: #27ae60;
+    }
+    
+    .stat-box.orange-top {
+        border-top-color: #e67e22;
+    }
+    
+    .stat-box.red-top {
+        border-top-color: #e74c3c;
+    }
+    
+    .stat-label {
+        font-size: 13px;
+        color: #95a5a6;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-num {
+        font-size: 32px;
+        font-weight: 700;
+        color: #2c3e50;
+        line-height: 1;
+    }
+    
+    .stat-info {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-top: 6px;
+    }
+    
+    .main-content {
+        margin-bottom: 20px;
+    }
+    
+    .card-box {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+    
+    .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    .action-item {
+        padding: 14px 16px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        border-left: 3px solid #3498db;
+    }
+    
+    .action-item:hover {
+        background: #e8f4f8;
+        text-decoration: none;
+    }
+    
+    .action-item.green {
+        border-left-color: #27ae60;
+    }
+    
+    .action-item.orange {
+        border-left-color: #e67e22;
+    }
+    
+    .action-item.purple {
+        border-left-color: #9b59b6;
+    }
+    
+    .action-item h5 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0 0 3px 0;
+    }
+    
+    .action-item p {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin: 0;
+    }
+    
+    .activity-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .activity-list li {
+        padding: 12px 0;
+        border-bottom: 1px solid #ecf0f1;
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .activity-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #3498db;
+        margin-top: 6px;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+    
+    .activity-dot.green {
+        background: #27ae60;
+    }
+    
+    .activity-dot.orange {
+        background: #e67e22;
+    }
+    
+    .activity-dot.red {
+        background: #e74c3c;
+    }
+    
+    .activity-text {
+        flex: 1;
+    }
+    
+    .activity-text strong {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    .activity-text span {
+        color: #7f8c8d;
+        font-size: 13px;
+    }
+    
+    .activity-time {
+        font-size: 12px;
+        color: #95a5a6;
+        white-space: nowrap;
+        margin-left: 10px;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 15px;
+    }
+    
+    .info-item {
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+    
+    .info-item label {
+        font-size: 12px;
+        color: #95a5a6;
+        display: block;
+        margin-bottom: 4px;
+    }
+    
+    .info-item .value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    @media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<!-- Welcome Section -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card bg-primary text-white border-0 shadow-sm">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h3 class="card-title mb-1">Welcome, <?= esc(session()->get('name')) ?>!</h3>
-                        <p class="card-text mb-0">You're logged in as <strong><?= esc(session()->get('email')) ?></strong>. Start managing your data below.</p>
-                    </div>
-                    <div class="col-auto">
-                        <i data-feather="smile" style="width: 48px; height: 48px; opacity: 0.5;"></i>
-                    </div>
+<div class="dash-wrap">
+    <div class="container-main">
+        <div class="page-head">
+            <h2>Dashboard</h2>
+            <p>Hi <?= esc(session()->get('name')) ?>, welcome back!</p>
+        </div>
+        
+        <div class="row stats-row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box">
+                    <div class="stat-label">Total Records</div>
+                    <div class="stat-num">150</div>
+                    <div class="stat-info">+12 this week</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box green-top">
+                    <div class="stat-label">Students</div>
+                    <div class="stat-num">44</div>
+                    <div class="stat-info">8 new students</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box orange-top">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-num">23</div>
+                    <div class="stat-info">Need attention</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box red-top">
+                    <div class="stat-label">Visitors</div>
+                    <div class="stat-num">65</div>
+                    <div class="stat-info">Last 7 days</div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Quick Access Cards -->
-<div class="row mb-5">
-    <div class="col-md-3 mb-3">
-        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
-            <div class="card-body text-center">
-                <i data-feather="list" style="width: 40px; height: 40px; color: #0d6efd; margin-bottom: 15px;"></i>
-                <h5 class="card-title">Records</h5>
-                <p class="card-text text-muted small">Manage all your records with full CRUD operations</p>
-                <a href="<?= base_url('records') ?>" class="btn btn-primary btn-sm">Manage Records</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
-            <div class="card-body text-center">
-                <i data-feather="users" style="width: 40px; height: 40px; color: #198754; margin-bottom: 15px;"></i>
-                <h5 class="card-title">Students</h5>
-                <p class="card-text text-muted small">View and manage student information</p>
-                <a href="<?= base_url('students') ?>" class="btn btn-success btn-sm">Manage Students</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
-            <div class="card-body text-center">
-                <i data-feather="settings" style="width: 40px; height: 40px; color: #fd7e14; margin-bottom: 15px;"></i>
-                <h5 class="card-title">Settings</h5>
-                <p class="card-text text-muted small">Configure user roles and permissions</p>
-                <a href="<?= base_url('users') ?>" class="btn btn-warning btn-sm">Settings</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card border-0 shadow-sm h-100 hover-shadow" style="transition: transform 0.2s;">
-            <div class="card-body text-center">
-                <i data-feather="log-out" style="width: 40px; height: 40px; color: #dc3545; margin-bottom: 15px;"></i>
-                <h5 class="card-title">Logout</h5>
-                <p class="card-text text-muted small">Sign out of your account safely</p>
-                <a href="<?= base_url('logout') ?>" class="btn btn-danger btn-sm">Sign Out</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Statistics Section -->
-<h5 class="mb-3">Dashboard Statistics</h5>
-<div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-primary">
-            <div class="inner">
-                <h3>150</h3>
-                <p>New Orders</p>
-            </div>
-            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"></path>
-            </svg>
-            <a href="#" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">More info <i class="bi bi-link-45deg"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-success">
-            <div class="inner">
-                <h3>53<sup class="fs-5">%</sup></h3>
-                <p>Bounce Rate</p>
-            </div>
-            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"></path>
-            </svg>
-            <a href="#" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">More info <i class="bi bi-link-45deg"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-warning">
-            <div class="inner">
-                <h3>44</h3>
-                <p>User Registrations</p>
-            </div>
-            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
-            </svg>
-            <a href="#" class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover">More info <i class="bi bi-link-45deg"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-danger">
-            <div class="inner">
-                <h3>65</h3>
-                <p>Unique Visitors</p>
-            </div>
-            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path clip-rule="evenodd" fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z"></path>
-                <path clip-rule="evenodd" fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z"></path>
-            </svg>
-            <a href="#" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">More info <i class="bi bi-link-45deg"></i></a>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-lg-7 connectedSortable">
-        <div class="card mb-4">
-            <div class="card-header"><h3 class="card-title">Sales Value</h3></div>
-            <div class="card-body"><div id="revenue-chart"></div></div>
-        </div>
-        <div class="card direct-chat direct-chat-primary mb-4">
-            <div class="card-header">
-                <h3 class="card-title">Direct Chat</h3>
-                <div class="card-tools">
-                    <span title="3 New Messages" class="badge text-bg-primary">3</span>
-                    <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
-                        <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
-                        <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" title="Contacts" data-lte-toggle="chat-pane">
-                        <i class="bi bi-chat-text-fill"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
+        
+        <div class="row main-content">
+            <div class="col-lg-8">
+                <div class="card-box">
+                    <h3 class="card-title">Quick Actions</h3>
+                    
+                    <a href="<?= base_url('records') ?>" class="action-item">
+                        <h5>Manage Records</h5>
+                        <p>View, create, edit or delete records</p>
+                    </a>
+                    
+                    <a href="<?= base_url('students') ?>" class="action-item green">
+                        <h5>Student Management</h5>
+                        <p>Access student profiles and information</p>
+                    </a>
+                    
+                    <a href="<?= base_url('profile') ?>" class="action-item orange">
+                        <h5>My Profile</h5>
+                        <p>Update your personal details and settings</p>
+                    </a>
+                    
+                    <a href="<?= base_url('users') ?>" class="action-item purple">
+                        <h5>User Settings</h5>
+                        <p>Manage user roles and permissions</p>
+                    </a>
+                </div>
+                
+                <div class="card-box">
+                    <h3 class="card-title">System Overview</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Database Status</label>
+                            <div class="value">Connected</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Server Load</label>
+                            <div class="value">Normal</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Last Backup</label>
+                            <div class="value">2 hours ago</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Active Sessions</label>
+                            <div class="value">12 users</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="direct-chat-messages">
-                    <div class="direct-chat-msg">
-                        <div class="direct-chat-infos clearfix">
-                            <span class="direct-chat-name float-start">Alexander Pierce</span>
-                            <span class="direct-chat-timestamp float-end">23 Jan 2:00 pm</span>
-                        </div>
-                        <img class="direct-chat-img" src="<?= base_url('assets/img/user1-128x128.jpg') ?>" alt="message user image" />
-                        <div class="direct-chat-text">Is this template really for free? That's unbelievable!</div>
-                    </div>
-                    <div class="direct-chat-msg end">
-                        <div class="direct-chat-infos clearfix">
-                            <span class="direct-chat-name float-end">Sarah Bullock</span>
-                            <span class="direct-chat-timestamp float-start">23 Jan 2:05 pm</span>
-                        </div>
-                        <img class="direct-chat-img" src="<?= base_url('assets/img/user3-128x128.jpg') ?>" alt="message user image" />
-                        <div class="direct-chat-text">You better believe it!</div>
-                    </div>
-                    <div class="direct-chat-msg">
-                        <div class="direct-chat-infos clearfix">
-                            <span class="direct-chat-name float-start">Alexander Pierce</span>
-                            <span class="direct-chat-timestamp float-end">23 Jan 5:37 pm</span>
-                        </div>
-                        <img class="direct-chat-img" src="<?= base_url('assets/img/user1-128x128.jpg') ?>" alt="message user image" />
-                        <div class="direct-chat-text">Working with AdminLTE on a great new app! Wanna join?</div>
-                    </div>
-                    <div class="direct-chat-msg end">
-                        <div class="direct-chat-infos clearfix">
-                            <span class="direct-chat-name float-end">Sarah Bullock</span>
-                            <span class="direct-chat-timestamp float-start">23 Jan 6:10 pm</span>
-                        </div>
-                        <img class="direct-chat-img" src="<?= base_url('assets/img/user3-128x128.jpg') ?>" alt="message user image" />
-                        <div class="direct-chat-text">I would love to.</div>
-                    </div>
-                </div>
-                <div class="direct-chat-contacts">
-                    <ul class="contacts-list">
-                        <li><a href="#"><img class="contacts-list-img" src="<?= base_url('assets/img/user1-128x128.jpg') ?>" alt="User Avatar" /><div class="contacts-list-info"><span class="contacts-list-name">Count Dracula<small class="contacts-list-date float-end">2/28/2023</small></span><span class="contacts-list-msg">How have you been? I was...</span></div></a></li>
-                        <li><a href="#"><img class="contacts-list-img" src="<?= base_url('assets/img/user7-128x128.jpg') ?>" alt="User Avatar" /><div class="contacts-list-info"><span class="contacts-list-name">Sarah Doe<small class="contacts-list-date float-end">2/23/2023</small></span><span class="contacts-list-msg">I will be waiting for...</span></div></a></li>
+            
+            <div class="col-lg-4">
+                <div class="card-box">
+                    <h3 class="card-title">Recent Activity</h3>
+                    <ul class="activity-list">
+                        <li>
+                            <span class="activity-dot"></span>
+                            <div class="activity-text">
+                                <strong>New record added</strong><br>
+                                <span>Record #1523 was created</span>
+                            </div>
+                            <div class="activity-time">2h ago</div>
+                        </li>
+                        <li>
+                            <span class="activity-dot green"></span>
+                            <div class="activity-text">
+                                <strong>Student enrolled</strong><br>
+                                <span>John Doe joined BSIT</span>
+                            </div>
+                            <div class="activity-time">5h ago</div>
+                        </li>
+                        <li>
+                            <span class="activity-dot orange"></span>
+                            <div class="activity-text">
+                                <strong>Profile updated</strong><br>
+                                <span>You changed your info</span>
+                            </div>
+                            <div class="activity-time">1d ago</div>
+                        </li>
+                        <li>
+                            <span class="activity-dot red"></span>
+                            <div class="activity-text">
+                                <strong>Record deleted</strong><br>
+                                <span>Record #1501 removed</span>
+                            </div>
+                            <div class="activity-time">2d ago</div>
+                        </li>
+                        <li>
+                            <span class="activity-dot"></span>
+                            <div class="activity-text">
+                                <strong>System backup</strong><br>
+                                <span>Automatic backup completed</span>
+                            </div>
+                            <div class="activity-time">3d ago</div>
+                        </li>
                     </ul>
-                </div>
-            </div>
-            <div class="card-footer">
-                <form action="#" method="post">
-                    <div class="input-group">
-                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" />
-                        <span class="input-group-append"><button type="button" class="btn btn-primary">Send</button></span>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-5 connectedSortable">
-        <div class="card text-white bg-primary bg-gradient border-primary mb-4">
-            <div class="card-header border-0">
-                <h3 class="card-title">Sales Value</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-primary btn-sm" data-lte-toggle="card-collapse">
-                        <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
-                        <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="card-body"><div id="world-map" style="height: 220px"></div></div>
-            <div class="card-footer border-0">
-                <div class="row">
-                    <div class="col-4 text-center">
-                        <div id="sparkline-1" class="text-dark"></div>
-                        <div class="text-white">Visitors</div>
-                    </div>
-                    <div class="col-4 text-center">
-                        <div id="sparkline-2" class="text-dark"></div>
-                        <div class="text-white">Online</div>
-                    </div>
-                    <div class="col-4 text-center">
-                        <div id="sparkline-3" class="text-dark"></div>
-                        <div class="text-white">Sales</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -239,37 +371,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('javascript') ?>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js" integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js" integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js" integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY=" crossorigin="anonymous"></script>
 <script>
-new Sortable(document.querySelector('.connectedSortable'), {group: 'shared', handle: '.card-header'});
-document.querySelectorAll('.connectedSortable .card-header').forEach((h) => {h.style.cursor = 'move';});
-
-const sales_chart = new ApexCharts(document.querySelector('#revenue-chart'), {
-    series: [{name: 'Digital Goods', data: [28, 48, 40, 19, 86, 27, 90]}, {name: 'Electronics', data: [65, 59, 80, 81, 56, 55, 40]}],
-    chart: {height: 300, type: 'area', toolbar: {show: false}},
-    legend: {show: false},
-    colors: ['#0d6efd', '#20c997'],
-    dataLabels: {enabled: false},
-    stroke: {curve: 'smooth'},
-    xaxis: {type: 'datetime', categories: ['2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01', '2023-05-01', '2023-06-01', '2023-07-01']},
-    tooltip: {x: {format: 'MMMM yyyy'}}
-});
-sales_chart.render();
-
-new jsVectorMap({selector: '#world-map', map: 'world'});
-
-[{data: [1000, 1200, 920, 927, 931, 1027, 819, 930, 1021]}, {data: [515, 519, 520, 522, 652, 810, 370, 627, 319, 630, 921]}, {data: [15, 19, 20, 22, 33, 27, 31, 27, 19, 30, 21]}].forEach((s, i) => {
-    new ApexCharts(document.querySelector('#sparkline-' + (i + 1)), {
-        series: [s],
-        chart: {type: 'area', height: 50, sparkline: {enabled: true}},
-        stroke: {curve: 'straight'},
-        fill: {opacity: 0.3},
-        yaxis: {min: 0},
-        colors: ['#DCE6EC']
-    }).render();
-});
+    feather.replace();
 </script>
 <?= $this->endSection() ?>
