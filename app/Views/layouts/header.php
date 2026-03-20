@@ -1,50 +1,34 @@
-<nav class="app-header navbar navbar-expand bg-body">
-    <div class="container-fluid">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                    <i class="bi bi-list"></i>
-                </a>
-            </li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Home</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Contact</a></li>
-            <li class="nav-item d-none d-md-block"><a href="<?= base_url('students') ?>" class="nav-link">Students</a></li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                    <i class="bi bi-search"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-                    <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                    <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-                </a>
-            </li>
-            <li class="nav-item dropdown user-menu">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                    <img src="<?= base_url('assets/images/avatar4.png') ?>" class="user-image rounded-circle shadow" alt="User Image" />
-                    <span class="d-none d-md-inline"><?= $user['fullname'] ?? 'User' ?></span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                    <li class="user-header text-bg-primary">
-                        <img src="<?= base_url('assets/images/avatar4.png') ?>" class="rounded-circle shadow" alt="User Image" />
-                        <p><?= $user['fullname'] ?? 'User' ?> - <?= $user['role'] ?? 'Member' ?><small>Member since Nov. 2023</small></p>
-                    </li>
-                    <li class="user-body">
-                        <div class="row">
-                            <div class="col-4 text-center"><a href="#">Followers</a></div>
-                            <div class="col-4 text-center"><a href="#">Sales</a></div>
-                            <div class="col-4 text-center"><a href="#">Friends</a></div>
-                        </div>
-                    </li>
-                    <li class="user-footer">
-                        <a href="#" class="btn btn-default btn-flat">Profile</a>
-                        <a href="<?= base_url('logout') ?>" class="btn btn-default btn-flat float-end">Sign out</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+<?php
+$userName = $user['fullname'] ?? $user['name'] ?? session('user')['name'] ?? 'User';
+$initials = strtoupper(substr($userName, 0, 1));
+?>
+<header class="topbar">
+    <button id="sidebarToggle" class="topbar-btn d-lg-none" style="border:none;">
+        <i class="bi bi-list" style="font-size:1.2rem;"></i>
+    </button>
+    <span class="topbar-title">Student Management System</span>
+    <div class="topbar-actions">
+        <a href="<?= base_url('profile') ?>" class="topbar-btn" title="Profile">
+            <i class="bi bi-person"></i>
+        </a>
+        <a href="<?= base_url('logout') ?>" class="topbar-btn" title="Logout">
+            <i class="bi bi-box-arrow-right"></i>
+        </a>
+        <div class="dropdown">
+            <a class="topbar-user dropdown-toggle" href="#" data-bs-toggle="dropdown" style="text-decoration:none;">
+                <div class="avatar"><?= $initials ?></div>
+                <span class="uname d-none d-md-inline"><?= esc($userName) ?></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" style="border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 8px 30px rgba(0,0,0,0.12); min-width:200px; padding:8px;">
+                <li class="px-3 py-2">
+                    <div style="font-weight:600; font-size:.875rem; color:#1e293b;"><?= esc($userName) ?></div>
+                    <div style="font-size:.75rem; color:#64748b;"><?= esc($user['email'] ?? session('user')['email'] ?? '') ?></div>
+                </li>
+                <li><hr class="dropdown-divider my-1"></li>
+                <li><a class="dropdown-item" href="<?= base_url('profile') ?>" style="border-radius:8px; font-size:.875rem;"><i class="bi bi-person me-2"></i>Profile</a></li>
+                <li><hr class="dropdown-divider my-1"></li>
+                <li><a class="dropdown-item text-danger" href="<?= base_url('logout') ?>" style="border-radius:8px; font-size:.875rem;"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+        </div>
     </div>
-</nav>
+</header>

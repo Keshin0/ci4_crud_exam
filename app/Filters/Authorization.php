@@ -33,13 +33,13 @@ class Authorization implements FilterInterface
         $segment                 = $uri->getSegment(1);
 
         if ($segment) {
-            $menu         = $this->ApplicationModel->getMenuByUrl($segment);
+            $menu = $this->ApplicationModel->getMenuByUrl($segment);
             if (!$menu) {
-                //not found
-                return redirect()->to(base_url('/'));
+                // route not managed by menu system — allow through
+                return;
             } else {
                 $dataAccess = [
-                    'roleID' => session()->get('role'),
+                    'roleID' => session('user')['role_id'] ?? null,
                     'menuID' => $menu['id']
                 ];
                 $userAccess = $this->ApplicationModel->checkUserAccess($dataAccess);

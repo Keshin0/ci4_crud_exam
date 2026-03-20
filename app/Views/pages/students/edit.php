@@ -10,30 +10,14 @@
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" name="name" value="<?= old('name', $student['name']) ?>" required>
-            <?php if (isset($errors['name'])): ?>
-                <div class="text-danger"><?= $errors['name'] ?></div>
-            <?php endif; ?>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" required><?= old('description', $student['description']) ?></textarea>
-            <?php if (isset($errors['description'])): ?>
-                <div class="text-danger"><?= $errors['description'] ?></div>
-            <?php endif; ?>
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="<?= old('email', $student['email']) ?>" required>
         </div>
         <div class="mb-3">
             <label for="course" class="form-label">Course</label>
             <input type="text" class="form-control" id="course" name="course" value="<?= old('course', $student['course']) ?>" required>
-            <?php if (isset($errors['course'])): ?>
-                <div class="text-danger"><?= $errors['course'] ?></div>
-            <?php endif; ?>
-        </div>
-        <div class="mb-3">
-            <label for="phone" class="form-label">Phone</label>
-            <input type="text" class="form-control" id="phone" name="phone" value="<?= old('phone', $student['phone']) ?>" required>
-            <?php if (isset($errors['phone'])): ?>
-                <div class="text-danger"><?= $errors['phone'] ?></div>
-            <?php endif; ?>
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>

@@ -17,7 +17,11 @@ class Auth extends BaseController
     public function index()
     {
         if (session()->get('isLoggedIn')) {
-            return redirect()->to('/dashboard');
+            $role = session('user')['role'] ?? '';
+            return match($role) {
+                'student' => redirect()->to('/student/dashboard'),
+                default   => redirect()->to('/dashboard'),
+            };
         }
 
         return view('pages/commons/login');
@@ -26,7 +30,11 @@ class Auth extends BaseController
     public function login()
     {
         if (session()->get('isLoggedIn')) {
-            return redirect()->to('/dashboard');
+            $role = session('user')['role'] ?? '';
+            return match($role) {
+                'student' => redirect()->to('/student/dashboard'),
+                default   => redirect()->to('/dashboard'),
+            };
         }
 
         $rules = [
@@ -41,16 +49,30 @@ class Auth extends BaseController
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
-        $user = $this->userModel->where('email', $email)->first();
+        $found = $this->userModel
+            ->select('users.id, users.name, users.email, users.password, users.role_id, roles.name AS role_name')
+            ->join('roles', 'roles.id = users.role_id', 'left')
+            ->where('users.email', $email)
+            ->first();
 
-        if ($user && password_verify($password, $user['password'])) {
+        if ($found && password_verify($password, $found['password'])) {
+            $role = $found['role_name'] ?? '';
             session()->set([
-                'user_id' => $user['id'],
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'isLoggedIn' => true
+                'isLoggedIn' => true,
+                'user' => [
+                    'id'      => $found['id'],
+                    'name'    => $found['name'],
+                    'email'   => $found['email'],
+                    'role'    => $role,
+                    'role_id' => $found['role_id'],
+                ],
             ]);
-            return redirect()->to('/dashboard')->with('success', 'Login successful');
+            return match($role) {
+                'admin'   => redirect()->to('/dashboard'),
+                'teacher' => redirect()->to('/dashboard'),
+                'student' => redirect()->to('/student/dashboard'),
+                default   => redirect()->to('/login'),
+            };
         } else {
             session()->setFlashdata('error', 'Invalid email or password');
             return redirect()->back()->withInput();
@@ -60,7 +82,11 @@ class Auth extends BaseController
     public function register()
     {
         if (session()->get('isLoggedIn')) {
-            return redirect()->to('/dashboard');
+            $role = session('user')['role'] ?? '';
+            return match($role) {
+                'student' => redirect()->to('/student/dashboard'),
+                default   => redirect()->to('/dashboard'),
+            };
         }
 
         return view('pages/commons/register');
@@ -69,20 +95,25 @@ class Auth extends BaseController
     public function storeRegister()
     {
         $rules = [
-            'name' => 'required|min_length[3]',
-            'email' => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[6]',
-            'confirm_password' => 'required|matches[password]'
+            'name'             => 'required|min_length[3]',
+            'email'            => 'required|valid_email|is_unique[users.email]',
+            'password'         => 'required|min_length[6]',
+            'confirm_password' => 'required|matches[password]',
         ];
 
         if (!$this->validate($rules)) {
             return view('pages/commons/register', ['validation' => $this->validator]);
         }
 
+        $roleModel = model('RoleModel');
+        $role      = $roleModel->findByName('student');
+
         $data = [
-            'name' => $this->request->getPost('name'),
-            'email' => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT)
+            'name'     => $this->request->getPost('name'),
+            'fullname' => $this->request->getPost('name'),
+            'email'    => $this->request->getPost('email'),
+            'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
+            'role_id'  => $role['id'] ?? null,
         ];
 
         if ($this->userModel->insert($data)) {
@@ -107,5 +138,10 @@ class Auth extends BaseController
     public function forbiddenPage()
     {
         return view('pages/commons/forbidden');
+    }
+
+    public function unauthorized()
+    {
+        return view('errors/unauthorized');
     }
 }

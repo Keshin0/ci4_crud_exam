@@ -13,17 +13,25 @@ class ProfileController extends BaseController
         $this->userModel = new UserModel();
     }
 
+    private function getAuthUserId(): ?int
+    {
+        return session('user')['id'] ?? null;
+    }
+
+    private function isStudent(): bool
+    {
+        return (session('user')['role'] ?? '') === 'student';
+    }
+
     public function show()
     {
-        $userId = session()->get('user_id');
-
+        $userId = $this->getAuthUserId();
         if (!$userId) {
             session()->destroy();
             return redirect()->to('/login')->with('error', 'Session expired. Please login again.');
         }
 
         $user = $this->userModel->find($userId);
-
         if (!$user) {
             session()->destroy();
             return redirect()->to('/login')->with('error', 'User not found. Please login again.');
@@ -34,34 +42,31 @@ class ProfileController extends BaseController
 
     public function edit()
     {
-        $userId = session()->get('user_id');
-
+        $userId = $this->getAuthUserId();
         if (!$userId) {
             session()->destroy();
             return redirect()->to('/login')->with('error', 'Session expired. Please login again.');
         }
 
         $user = $this->userModel->find($userId);
-
         if (!$user) {
             session()->destroy();
             return redirect()->to('/login')->with('error', 'User not found. Please login again.');
         }
 
-        return view('profile/edit', ['user' => $user]);
+        $view = $this->isStudent() ? 'student/profile_edit' : 'profile/edit';
+        return view($view, ['user' => $user]);
     }
 
     public function update()
     {
-        $userId = session()->get('user_id');
-
+        $userId = $this->getAuthUserId();
         if (!$userId) {
             session()->destroy();
             return redirect()->to('/login')->with('error', 'Session expired. Please login again.');
         }
 
         $user = $this->userModel->find($userId);
-
         if (!$user) {
             session()->destroy();
             return redirect()->to('/login')->with('error', 'User not found. Please login again.');
@@ -84,15 +89,17 @@ class ProfileController extends BaseController
         }
 
         // Build update data
+        $fullname = $this->request->getPost('fullname');
         $updateData = [
-            'fullname' => $this->request->getPost('fullname'),
-            'email' => $this->request->getPost('email'),
+            'fullname'   => $fullname,
+            'name'       => $fullname,
+            'email'      => $this->request->getPost('email'),
             'student_id' => $this->request->getPost('student_id'),
-            'course' => $this->request->getPost('course'),
+            'course'     => $this->request->getPost('course'),
             'year_level' => $this->request->getPost('year_level'),
-            'section' => $this->request->getPost('section'),
-            'phone' => $this->request->getPost('phone'),
-            'address' => $this->request->getPost('address'),
+            'section'    => $this->request->getPost('section'),
+            'phone'      => $this->request->getPost('phone'),
+            'address'    => $this->request->getPost('address'),
         ];
 
         // Handle image upload
@@ -129,13 +136,14 @@ class ProfileController extends BaseController
 
         // Update profile
         if ($this->userModel->updateProfile($userId, $updateData)) {
-            // Update session
             $updatedUser = $this->userModel->find($userId);
-            session()->set('user_id', $updatedUser['id']);
-            session()->set('name', $updatedUser['name'] ?? $updatedUser['fullname']);
-            session()->set('email', $updatedUser['email']);
+            $sessionUser = session('user');
+            $sessionUser['name']  = $updatedUser['name'];
+            $sessionUser['email'] = $updatedUser['email'];
+            session()->set('user', $sessionUser);
 
-            return redirect()->to('/profile')->with('success', 'Profile updated successfully!');
+            $redirect = $this->isStudent() ? '/student/dashboard' : '/profile';
+            return redirect()->to($redirect)->with('success', 'Profile updated successfully!');
         }
 
         return redirect()->back()->withInput()->with('error', 'Failed to update profile. Please try again.');

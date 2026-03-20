@@ -1,271 +1,118 @@
 <?= $this->extend('layouts/main') ?>
-
 <?= $this->section('title') ?>My Profile<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .profile-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 40px 0;
-        margin-bottom: 30px;
-    }
-    
-    .profile-avatar {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        border: 5px solid white;
-        object-fit: cover;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .profile-placeholder {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        border: 5px solid white;
-        background: white;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .profile-stats {
-        display: flex;
-        gap: 40px;
-        margin-top: 20px;
-    }
-    
-    .stat-item {
-        text-align: center;
-    }
-    
-    .stat-number {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: white;
-        display: block;
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: rgba(255,255,255,0.9);
-    }
-    
-    .profile-username {
-        font-size: 2rem;
-        font-weight: 700;
-        color: white;
-        margin: 15px 0 5px 0;
-    }
-    
-    .profile-bio {
-        color: rgba(255,255,255,0.95);
-        font-size: 1rem;
-    }
-    
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-top: 30px;
-    }
-    
-    .info-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .info-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    }
-    
-    .info-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: #8e8e8e;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        margin-bottom: 8px;
-    }
-    
-    .info-value {
-        font-size: 1rem;
-        color: #262626;
-        font-weight: 500;
-    }
-    
-    .info-icon {
-        color: #667eea;
-        margin-right: 8px;
-    }
-    
-    .edit-profile-btn {
-        background: white;
-        color: #667eea;
-        border: 2px solid white;
-        font-weight: 600;
-        padding: 8px 30px;
-        border-radius: 8px;
-        transition: all 0.3s;
-    }
-    
-    .edit-profile-btn:hover {
-        background: transparent;
-        color: white;
-        border-color: white;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
-<!-- Profile Header -->
-<div class="profile-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-3 text-center">
+<?php
+$name    = $user['fullname'] ?? $user['name'] ?? 'User';
+$initial = strtoupper(substr($name, 0, 1));
+$role    = session('user')['role'] ?? '';
+$editUrl = $role === 'student' ? base_url('student/profile/edit') : base_url('profile/edit');
+?>
+
+<div class="page-header d-flex align-items-center justify-content-between">
+    <div>
+        <h1>My Profile</h1>
+        <p>View and manage your personal information</p>
+    </div>
+    <a href="<?= $editUrl ?>" class="btn btn-primary">
+        <i class="bi bi-pencil me-1"></i> Edit Profile
+    </a>
+</div>
+
+<div class="row g-3">
+    <!-- Avatar Card -->
+    <div class="col-lg-3">
+        <div class="card text-center">
+            <div class="card-body py-4">
                 <?php if (!empty($user['profile_image'])): ?>
-                    <img src="<?= base_url('uploads/profiles/' . esc($user['profile_image'])) ?>" 
-                         alt="Profile Image" 
-                         class="profile-avatar">
+                    <img src="<?= base_url('uploads/profiles/' . esc($user['profile_image'])) ?>"
+                         class="rounded-circle mb-3"
+                         style="width:100px;height:100px;object-fit:cover;border:4px solid #e8f1fa;" alt="Avatar">
                 <?php else: ?>
-                    <div class="profile-placeholder">
-                        <i data-feather="user" style="width: 80px; height: 80px; color: #667eea;"></i>
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width:100px;height:100px;background:linear-gradient(135deg,#1e3a5f,#2d6a9f);font-size:2.5rem;font-weight:700;color:#fff;">
+                        <?= $initial ?>
                     </div>
                 <?php endif; ?>
+                <h5 class="fw-700 mb-1" style="font-weight:700;"><?= esc($name) ?></h5>
+                <p class="text-muted mb-2" style="font-size:.85rem;"><?= esc($user['email'] ?? '') ?></p>
+                <span class="badge" style="background:#e8f1fa;color:#2d6a9f;border-radius:6px;font-weight:500;">
+                    <?= esc(ucfirst($role)) ?>
+                </span>
             </div>
-            <div class="col-md-9">
-                <h1 class="profile-username"><?= esc($user['fullname'] ?? $user['name'] ?? 'User') ?></h1>
-                <p class="profile-bio">
-                    <?php if (!empty($user['course']) && !empty($user['year_level'])): ?>
-                        <?= esc($user['course']) ?> - Year <?= esc($user['year_level']) ?>
-                        <?php if (!empty($user['section'])): ?>
-                            | Section <?= esc($user['section']) ?>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        Complete your profile to show more information
-                    <?php endif; ?>
+        </div>
+
+        <!-- Member Since -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-calendar-check" style="color:#2d6a9f;"></i>
+                    <span style="font-size:.75rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;">Member Since</span>
+                </div>
+                <p class="mb-0 fw-600" style="font-weight:600;font-size:.9rem;">
+                    <?= !empty($user['created_at']) ? date('F d, Y', strtotime($user['created_at'])) : 'N/A' ?>
                 </p>
-                
-                <div class="profile-stats">
-                    <div class="stat-item">
-                        <span class="stat-number"><?= !empty($user['student_id']) ? '1' : '0' ?></span>
-                        <span class="stat-label">Student ID</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="col-lg-9">
+        <!-- Basic Info -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5><i class="bi bi-person me-2" style="color:#2d6a9f;"></i>Basic Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Full Name</p>
+                        <p class="mb-0 fw-600" style="font-weight:600;"><?= esc($name) ?></p>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number"><?= !empty($user['course']) ? '1' : '0' ?></span>
-                        <span class="stat-label">Course</span>
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Email Address</p>
+                        <p class="mb-0 fw-600" style="font-weight:600;"><?= esc($user['email'] ?? 'Not set') ?></p>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number"><?= date('Y') - date('Y', strtotime($user['created_at'] ?? 'now')) ?></span>
-                        <span class="stat-label">Years</span>
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Phone Number</p>
+                        <p class="mb-0 fw-600" style="font-weight:600;"><?= esc($user['phone'] ?? 'Not set') ?></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Address</p>
+                        <p class="mb-0 fw-600" style="font-weight:600;"><?= esc($user['address'] ?? 'Not set') ?></p>
                     </div>
                 </div>
-                
-                <div class="mt-4">
-                    <a href="<?= base_url('profile/edit') ?>" class="btn edit-profile-btn">
-                        <i data-feather="edit-2" style="width: 16px; height: 16px;"></i> Edit Profile
-                    </a>
+            </div>
+        </div>
+
+        <!-- Role-based Info -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-person-badge me-2" style="color:#2d6a9f;"></i><?= $role === 'admin' ? 'Admin Information' : 'Teacher Information' ?></h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;"><?= $role === 'admin' ? 'Admin ID' : 'Employee ID' ?></p>
+                        <p class="mb-0 fw-600" style="font-weight:600;"><?= esc($user['student_id'] ?? 'Not set') ?></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;"><?= $role === 'admin' ? 'Office / Unit' : 'Department' ?></p>
+                        <p class="mb-0 fw-600" style="font-weight:600;"><?= esc($user['course'] ?? 'Not set') ?></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;"><?= $role === 'admin' ? 'Year Level Access' : 'Year Level Handled' ?></p>
+                        <p class="mb-0 fw-600" style="font-weight:600;">
+                            <?= !empty($user['year_level']) ? 'Year ' . esc($user['year_level']) : 'Not set' ?>
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1" style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;"><?= $role === 'admin' ? 'Section Access' : 'Section Handled' ?></p>
+                        <p class="mb-0 fw-600" style="font-weight:600;"><?= esc($user['section'] ?? 'Not set') ?></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Profile Information Grid -->
-<div class="container">
-    <div class="info-grid">
-        <!-- Email -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="mail" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Email Address
-            </div>
-            <div class="info-value"><?= esc($user['email'] ?? 'Not set') ?></div>
-        </div>
-        
-        <!-- Student ID -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="credit-card" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Student ID
-            </div>
-            <div class="info-value"><?= esc($user['student_id'] ?? 'Not set') ?></div>
-        </div>
-        
-        <!-- Course -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="book" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Course
-            </div>
-            <div class="info-value"><?= esc($user['course'] ?? 'Not set') ?></div>
-        </div>
-        
-        <!-- Year Level -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="award" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Year Level
-            </div>
-            <div class="info-value"><?= !empty($user['year_level']) ? esc($user['year_level']) . ' Year' : 'Not set' ?></div>
-        </div>
-        
-        <!-- Section -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="users" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Section
-            </div>
-            <div class="info-value"><?= esc($user['section'] ?? 'Not set') ?></div>
-        </div>
-        
-        <!-- Phone -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="phone" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Phone Number
-            </div>
-            <div class="info-value"><?= esc($user['phone'] ?? 'Not set') ?></div>
-        </div>
-        
-        <!-- Address -->
-        <div class="info-card" style="grid-column: span 2;">
-            <div class="info-label">
-                <i data-feather="map-pin" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Address
-            </div>
-            <div class="info-value"><?= esc($user['address'] ?? 'Not set') ?></div>
-        </div>
-        
-        <!-- Account Created -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="calendar" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Member Since
-            </div>
-            <div class="info-value"><?= !empty($user['created_at']) ? date('F d, Y', strtotime($user['created_at'])) : 'N/A' ?></div>
-        </div>
-        
-        <!-- Last Updated -->
-        <div class="info-card">
-            <div class="info-label">
-                <i data-feather="clock" class="info-icon" style="width: 14px; height: 14px;"></i>
-                Last Updated
-            </div>
-            <div class="info-value"><?= !empty($user['updated_at']) ? date('F d, Y', strtotime($user['updated_at'])) : 'N/A' ?></div>
-        </div>
-    </div>
-</div>
-<?= $this->endSection() ?>
-
-<?= $this->section('javascript') ?>
-<script>
-    feather.replace();
-</script>
 <?= $this->endSection() ?>

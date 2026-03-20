@@ -2,59 +2,87 @@
 
 use CodeIgniter\Router\RouteCollection;
 
-/**
- * @var RouteCollection $routes
- */
-$routes->get('/', 'Auth::index');
-$routes->get('login', 'Auth::index');
-$routes->post('login', 'Auth::login');
-$routes->get('logout', 'Auth::logout');
-$routes->get('blocked', 'Auth::forbiddenPage');
-$routes->get('register', 'Auth::register');
+/** @var RouteCollection $routes */
+
+// ── Public routes ────────────────────────────────────────────────────────────
+$routes->get('/',         'Auth::index');
+$routes->get('login',     'Auth::index');
+$routes->post('login',    'Auth::login');
+$routes->get('logout',    'Auth::logout');
+$routes->get('register',  'Auth::register');
 $routes->post('register', 'Auth::storeRegister');
+$routes->get('blocked',      'Auth::forbiddenPage');
+$routes->get('unauthorized', 'Auth::unauthorized');
 
-$routes->get('dashboard', 'Home::index', ['filter' => 'isLoggedIn']);
-$routes->get('dashboard-v2', 'Home::dashboardV2', ['filter' => 'isLoggedIn']);
-$routes->get('dashboard-v3', 'Home::dashboardV3', ['filter' => 'isLoggedIn']);
-
-// Profile Routes
-$routes->get('profile', 'ProfileController::show', ['filter' => 'isLoggedIn']);
-$routes->get('profile/edit', 'ProfileController::edit', ['filter' => 'isLoggedIn']);
-$routes->post('profile/update', 'ProfileController::update', ['filter' => 'isLoggedIn']);
-
-// Setting Routes
-$routes->group('users', static function ($routes) {
-    $routes->get('/', 'Settings::users');
-    $routes->post('create-role', 'Settings::createRole');
-    $routes->post('update-role', 'Settings::updateRole');
-    $routes->delete('delete-role/(:num)', 'Settings::deleteRole/$1');
-
-    $routes->get('role-access', 'Settings::roleAccess');
-    $routes->post('create-user', 'Settings::createUser');
-    $routes->post('update-user', 'Settings::updateUser');
-    $routes->delete('delete-user/(:num)', 'Settings::deleteUser/$1');
-
-    $routes->post('change-menu-permission', 'Settings::changeMenuPermission');
-    $routes->post('change-menu-category-permission', 'Settings::changeMenuCategoryPermission');
-    $routes->post('change-submenu-permission', 'Settings::changeSubMenuPermission');
+// ── Student routes — auth|student ────────────────────────────────────────────
+$routes->group('', ['filter' => ['auth', 'student']], function ($routes) {
+    $routes->get('student/dashboard',       'StudentDashboardController::index');
+    $routes->get('student/profile/edit',    'ProfileController::edit');
+    $routes->post('student/profile/update', 'ProfileController::update');
 });
 
-$routes->group('menu-management', static function ($routes) {
-    $routes->get('/', 'Settings::menuManagement');
-    $routes->post('create-menu-category', 'Settings::createMenuCategory');
-    $routes->post('create-menu', 'Settings::createMenu');
-    $routes->post('create-submenu', 'Settings::createSubMenu');
+// ── Teacher routes — auth|teacher (teacher + admin) ──────────────────────────
+$routes->group('', ['filter' => ['auth', 'teacher']], function ($routes) {
+    $routes->get('dashboard',                        'Home::index');
+    $routes->get('dashboard-v2',                     'Home::dashboardV2');
+    $routes->get('dashboard-v3',                     'Home::dashboardV3');
+    $routes->get('profile',                          'ProfileController::show');
+    $routes->get('profile/edit',                     'ProfileController::edit');
+    $routes->post('profile/update',                  'ProfileController::update');
+    $routes->get('students',                         'StudentManagementController::index');
+    $routes->get('students/show/(:num)',              'StudentManagementController::show/$1');
+    $routes->get('students/edit/(:num)',              'Student::edit/$1');
+    $routes->post('students/update/(:num)',           'Student::update/$1');
+
+    // Records
+    $routes->get('records',                          'Records::index');
+    $routes->get('records/new',                      'Records::new');
+    $routes->post('records/create',                  'Records::create');
+    $routes->get('records/(:num)',                   'Records::show/$1');
+    $routes->get('records/(:num)/edit',              'Records::edit/$1');
+    $routes->post('records/(:num)/update',           'Records::update/$1');
+    $routes->delete('records/(:num)/delete',         'Records::delete/$1');
+    $routes->get('records/dashboard',                'Records::dashboard');
+
+    // Computers
+    $routes->get('computers',                        'ComputerController::index');
+    $routes->get('computers/new',                    'ComputerController::new');
+    $routes->post('computers/create',                'ComputerController::create');
+    $routes->get('computers/(:num)',                 'ComputerController::show/$1');
+    $routes->get('computers/(:num)/edit',            'ComputerController::edit/$1');
+    $routes->post('computers/(:num)/update',         'ComputerController::update/$1');
+    $routes->delete('computers/(:num)/delete',       'ComputerController::delete/$1');
 });
-$routes->get('menu','Menu::index');
 
-// Student Routes
-$routes->get('students', 'Student::index');
-$routes->post('student/store', 'Student::store');
-$routes->delete('student/delete/(:num)', 'Student::delete/$1');
+// ── Admin routes — auth|admin ─────────────────────────────────────────────────
+$routes->group('admin', ['filter' => ['auth', 'admin']], function ($routes) {
+    // Roles CRUD
+    $routes->get('roles',                      'Admin\RoleController::index');
+    $routes->get('roles/create',               'Admin\RoleController::create');
+    $routes->post('roles/store',               'Admin\RoleController::store');
+    $routes->get('roles/edit/(:num)',          'Admin\RoleController::edit/$1');
+    $routes->post('roles/update/(:num)',       'Admin\RoleController::update/$1');
+    $routes->get('roles/delete/(:num)',        'Admin\RoleController::delete/$1');
 
-// Records CRUD Routes (RESTful Resource)
-$routes->get('records/dashboard', 'Records::dashboard', ['filter' => 'isLoggedIn|isGranted']);
-$routes->resource('records');
+    // Users
+    $routes->get('users',                          'Admin\UserAdminController::index');
+    $routes->post('users/assign-role/(:num)',       'Admin\UserAdminController::assignRole/$1');
+    $routes->post('users/delete/(:num)',            'Admin\UserAdminController::deleteUser/$1');
 
-// Computers CRUD Routes (RESTful Resource)
-$routes->resource('computers');
+    // Settings / menu management (admin only)
+    $routes->get('users/role-access',                        'Settings::roleAccess');
+    $routes->post('users/create-role',                       'Settings::createRole');
+    $routes->post('users/update-role',                       'Settings::updateRole');
+    $routes->delete('users/delete-role/(:num)',              'Settings::deleteRole/$1');
+    $routes->post('users/create-user',                       'Settings::createUser');
+    $routes->post('users/update-user',                       'Settings::updateUser');
+    $routes->delete('users/delete-user/(:num)',              'Settings::deleteUser/$1');
+    $routes->post('users/change-menu-permission',            'Settings::changeMenuPermission');
+    $routes->post('users/change-menu-category-permission',   'Settings::changeMenuCategoryPermission');
+    $routes->post('users/change-submenu-permission',         'Settings::changeSubMenuPermission');
+
+    $routes->get('menu-management',                          'Settings::menuManagement');
+    $routes->post('menu-management/create-menu-category',    'Settings::createMenuCategory');
+    $routes->post('menu-management/create-menu',             'Settings::createMenu');
+    $routes->post('menu-management/create-submenu',          'Settings::createSubMenu');
+});

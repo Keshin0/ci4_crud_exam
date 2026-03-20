@@ -14,7 +14,7 @@ class UserModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'name', 'fullname', 'email',
-        'password',
+        'password', 'role_id',
         'created_at',
         'student_id',
         'course', 'year_level', 'section', 'phone',
@@ -54,5 +54,20 @@ class UserModel extends Model
     public function updateProfile(int $userId, array $data): bool
     {
         return $this->update($userId, $data);
+    }
+
+    public function findWithRole(int $userId): array|null
+    {
+        return $this->select('users.*, roles.name AS role_name, roles.label AS role_label')
+            ->join('roles', 'roles.id = users.role_id', 'left')
+            ->find($userId);
+    }
+
+    public function getAllWithRoles(): array
+    {
+        return $this->select('users.*, roles.name AS role_name, roles.label AS role_label')
+            ->join('roles', 'roles.id = users.role_id', 'left')
+            ->orderBy('users.name', 'ASC')
+            ->findAll();
     }
 }

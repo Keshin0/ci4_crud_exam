@@ -3,306 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?= $this->renderSection('title') ?> - CI4 CRUD Application</title>
-    
-    <!-- Bootstrap 5 CSS from CDN -->
+    <title><?= $this->renderSection('title') ?> - Student Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Feather Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css">
-    
-    <!-- Custom Styles Section -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0d6efd;
-            --secondary-color: #6c757d;
-            --success-color: #198754;
-            --danger-color: #dc3545;
+            --sidebar-width: 260px;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --sidebar-active: #2d6a9f;
+            --topbar-height: 64px;
+            --accent: #2d6a9f;
+            --accent-light: #e8f1fa;
+            --body-bg: #f1f5f9;
+            --card-radius: 14px;
+            --text-primary: #1e293b;
+            --text-muted: #64748b;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--body-bg); color: var(--text-primary); }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            display: flex; flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
         }
-        
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background-color: #f8f9fa;
+        .sidebar-brand {
+            padding: 20px 24px;
+            display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            min-height: var(--topbar-height);
         }
-        
-        /* Navbar Styles */
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            background-color: #fff !important;
+        .sidebar-brand .brand-icon {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--accent), #1a8a6e);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: #fff; flex-shrink: 0;
         }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--primary-color) !important;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .sidebar-brand .brand-text { color: #fff; font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
+        .sidebar-brand .brand-sub { color: rgba(255,255,255,0.4); font-size: 0.72rem; font-weight: 400; }
+
+        .sidebar-section { padding: 20px 16px 8px; }
+        .sidebar-section-label {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0 8px;
+            margin-bottom: 6px;
         }
-        
-        .navbar-brand i {
-            font-size: 1.8rem;
-        }
-        
-        .nav-link {
-            color: #333 !important;
+        .nav-item-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.875rem;
             font-weight: 500;
-            margin: 0 8px;
-            transition: color 0.3s ease;
+            transition: all 0.2s;
+            margin-bottom: 2px;
         }
-        
-        .nav-link:hover {
-            color: var(--primary-color) !important;
-        }
-        
-        .nav-link.active {
-            color: var(--primary-color) !important;
-            border-bottom: 2px solid var(--primary-color);
-        }
-        
-        /* Main Content Area */
-        main {
-            flex: 1;
-            padding: 40px 0;
-        }
-        
-        .container-main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        /* Footer Styles */
-        footer {
-            background-color: #343a40;
-            color: white;
-            padding: 40px 0 20px;
+        .nav-item-link i { font-size: 1rem; flex-shrink: 0; }
+        .nav-item-link:hover { background: var(--sidebar-hover); color: #fff; }
+        .nav-item-link.active { background: var(--sidebar-active); color: #fff; box-shadow: 0 4px 12px rgba(45,106,159,0.4); }
+
+        .sidebar-footer {
             margin-top: auto;
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
-        
-        footer a {
-            color: #0d6efd;
+        .sidebar-user {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+        .sidebar-user .avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--accent), #1a8a6e);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 600; font-size: 0.85rem; flex-shrink: 0;
+        }
+        .sidebar-user .user-info .name { color: #fff; font-size: 0.825rem; font-weight: 600; }
+        .sidebar-user .user-info .role { color: rgba(255,255,255,0.4); font-size: 0.72rem; }
+
+        /* ── Topbar ── */
+        .topbar {
+            position: fixed; top: 0;
+            left: var(--sidebar-width); right: 0;
+            height: var(--topbar-height);
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center;
+            padding: 0 28px;
+            z-index: 999;
+            gap: 16px;
+        }
+        .topbar-title { font-weight: 600; font-size: 1rem; color: var(--text-primary); flex: 1; }
+        .topbar-actions { display: flex; align-items: center; gap: 8px; }
+        .topbar-btn {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer; transition: all 0.2s;
             text-decoration: none;
         }
-        
-        footer a:hover {
-            text-decoration: underline;
+        .topbar-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+        .topbar-user {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 12px 6px 6px;
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+            cursor: pointer; transition: all 0.2s;
+            text-decoration: none; color: inherit;
         }
-        
-        .footer-section {
-            margin-bottom: 20px;
-        }
-        
-        .footer-section h5 {
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: white;
-        }
-        
-        .footer-divider {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 20px;
-            padding-top: 20px;
-        }
-        
-        /* Alert Styles */
-        .alert {
-            border: none;
+        .topbar-user:hover { background: var(--accent-light); border-color: var(--accent); }
+        .topbar-user .avatar {
+            width: 30px; height: 30px;
+            background: linear-gradient(135deg, var(--accent), #1a8a6e);
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 600; font-size: 0.75rem;
         }
-        
-        .alert-success {
-            background-color: #d1e7dd;
-            color: #0f5132;
+        .topbar-user .uname { font-size: 0.825rem; font-weight: 600; color: var(--text-primary); }
+
+        /* ── Main Content ── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding-top: var(--topbar-height);
+            min-height: 100vh;
         }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #842029;
+        .page-body { padding: 28px; }
+
+        /* ── Cards ── */
+        .card {
+            border: none;
+            border-radius: var(--card-radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
         }
-        
-        .alert-info {
-            background-color: #cfe2ff;
-            color: #084298;
+        .card-header {
+            background: #fff;
+            border-bottom: 1px solid #f1f5f9;
+            border-radius: var(--card-radius) var(--card-radius) 0 0 !important;
+            padding: 18px 24px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        
-        /* User Dropdown */
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .card-header h5 { font-weight: 600; font-size: 0.95rem; margin: 0; color: var(--text-primary); }
+        .card-body { padding: 24px; }
+
+        /* ── Buttons ── */
+        .btn { border-radius: 9px; font-weight: 500; font-size: 0.875rem; padding: 8px 16px; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #1e3a5f, var(--accent)); border: none; box-shadow: 0 3px 10px rgba(45,106,159,0.3); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(45,106,159,0.4); }
+        .btn-warning { background: #f59e0b; border: none; color: #fff; }
+        .btn-warning:hover { background: #d97706; color: #fff; }
+        .btn-danger { background: #ef4444; border: none; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #f1f5f9; border: none; color: var(--text-primary); }
+        .btn-secondary:hover { background: #e2e8f0; color: var(--text-primary); }
+        .btn-success { background: #10b981; border: none; }
+        .btn-success:hover { background: #059669; }
+
+        /* ── Table ── */
+        .table { font-size: 0.875rem; }
+        .table thead th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 16px;
         }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary-color);
+        .table tbody td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .table tbody tr:hover { background: #f8fafc; }
+        .table tbody tr:last-child td { border-bottom: none; }
+
+        /* ── Form Controls ── */
+        .form-label { font-weight: 500; font-size: 0.875rem; color: #374151; margin-bottom: 6px; }
+        .form-control, .form-select {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            transition: all 0.2s;
         }
-        
-        /* Responsive */
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(45,106,159,0.12);
+            background: #fff;
+        }
+
+        /* ── Alerts ── */
+        .alert { border: none; border-radius: 10px; font-size: 0.875rem; padding: 12px 16px; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-danger { background: #fee2e2; color: #991b1b; }
+        .alert-warning { background: #fef3c7; color: #92400e; }
+        .alert-info { background: #dbeafe; color: #1e40af; }
+
+        /* ── Page Header ── */
+        .page-header { margin-bottom: 24px; }
+        .page-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-header p { color: var(--text-muted); font-size: 0.875rem; }
+
+        /* ── Badge ── */
+        .badge { border-radius: 6px; font-weight: 500; font-size: 0.75rem; padding: 4px 8px; }
+
+        /* ── Responsive ── */
         @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-            
-            main {
-                padding: 20px 0;
-            }
-            
-            .user-name {
-                display: none;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .topbar { left: 0; }
+            .main-content { margin-left: 0; }
         }
     </style>
-    
     <?= $this->renderSection('styles') ?>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white">
-        <div class="container-main">
-            <a class="navbar-brand" href="<?= base_url('/') ?>">
-                <i data-feather="zap"></i>
-                <span>CI4 CRUD</span>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <?php if (session()->get('isLoggedIn')): ?>
-                        <li class="nav-item">
-                            <a class="nav-link <?= strpos(current_url(), '/dashboard') !== false ? 'active' : '' ?>" href="<?= base_url('dashboard') ?>">
-                                <i data-feather="grid" style="width: 18px; height: 18px; margin-right: 5px;"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?= strpos(current_url(), '/records') !== false ? 'active' : '' ?>" href="<?= base_url('records') ?>">
-                                <i data-feather="list" style="width: 18px; height: 18px; margin-right: 5px;"></i>Records
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?= strpos(current_url(), '/students') !== false ? 'active' : '' ?>" href="<?= base_url('students') ?>">
-                                <i data-feather="users" style="width: 18px; height: 18px; margin-right: 5px;"></i>Students
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?= strpos(current_url(), '/profile') !== false ? 'active' : '' ?>" href="<?= base_url('profile') ?>">
-                                <i data-feather="user" style="width: 18px; height: 18px; margin-right: 5px;"></i>Profile
-                            </a>
-                        </li>
-                        
-                        <!-- User Dropdown Menu -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i data-feather="user" style="width: 18px; height: 18px; margin-right: 5px;"></i>
-                                <span class="user-name"><?= session()->get('name') ?></span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><h6 class="dropdown-header"><?= session()->get('name') ?></h6></li>
-                                <li><small class="dropdown-item disabled text-muted"><?= session()->get('email') ?></small></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#"><i data-feather="settings" style="width: 16px; height: 16px; margin-right: 8px;"></i>Settings</a></li>
-                                <li><a class="dropdown-item" href="#"><i data-feather="help-circle" style="width: 16px; height: 16px; margin-right: 8px;"></i>Help</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item text-danger" href="<?= base_url('logout') ?>">
-                                        <i data-feather="log-out" style="width: 16px; height: 16px; margin-right: 8px;"></i>Logout
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= base_url('login') ?>">
-                                <i data-feather="log-in" style="width: 18px; height: 18px; margin-right: 5px;"></i>Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= base_url('register') ?>">
-                                <i data-feather="user-plus" style="width: 18px; height: 18px; margin-right: 5px;"></i>Register
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Sidebar -->
+    <?= $this->include('layouts/sidebar') ?>
 
-    <!-- Main Content Area -->
-    <main>
-        <div class="container-main">
-            <!-- Flash Messages -->
+    <!-- Topbar -->
+    <?= $this->include('layouts/header') ?>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-body">
             <?= $this->include('components/alerts') ?>
-
-            <!-- Page Content -->
             <?= $this->renderSection('content') ?>
         </div>
-    </main>
+        <?= $this->include('layouts/footer') ?>
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container-main">
-            <div class="row">
-                <div class="col-md-4 footer-section">
-                    <h5>About This Application</h5>
-                    <p>A CodeIgniter 4 CRUD application demonstrating modern web development best practices with Bootstrap 5 styling and RESTful design patterns.</p>
-                </div>
-                
-                <div class="col-md-4 footer-section">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="<?= base_url('/') ?>">Home</a></li>
-                        <li><a href="<?= base_url('records') ?>">Records</a></li>
-                        <li><a href="<?= base_url('students') ?>">Students</a></li>
-                        <li><a href="<?= base_url('login') ?>">Login</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-md-4 footer-section">
-                    <h5>Technologies</h5>
-                    <ul class="list-unstyled">
-                        <li>CodeIgniter 4</li>
-                        <li>Bootstrap 5</li>
-                        <li>MySQL Database</li>
-                        <li>RESTful API</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-divider">
-                <p class="mb-0">&copy; <span id="currentYear"></span> CI4 CRUD Application. All rights reserved. | Developed with <i data-feather="heart" style="width: 16px; height: 16px; color: #dc3545;"></i> using CodeIgniter 4</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap 5 JS from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Feather Icons-->
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script>
-        // Initialize feather icons
-        feather.replace();
-        
-        // Set current year in footer
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        // Mobile sidebar toggle
+        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('open');
+        });
     </script>
-    
     <?= $this->renderSection('javascript') ?>
 </body>
 </html>

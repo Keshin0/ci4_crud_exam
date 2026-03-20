@@ -1,8 +1,4 @@
-<footer class="app-footer">
-    <div class="float-end d-none d-sm-inline">Environment: <?= ucfirst(ENVIRONMENT) ?></div>
-    <strong>
-        Copyright &copy; 2014-<?= date('Y') ?>&nbsp;
-        <a href="<?= base_url() ?>" class="text-decoration-none">CodeIgniter 4 Starter Panel</a>.
-    </strong>
-    All rights reserved.
+<footer style="padding: 20px 28px; border-top: 1px solid #e2e8f0; background:#fff; font-size:.8rem; color:#94a3b8; display:flex; justify-content:space-between; align-items:center;">
+    <span>&copy; <?= date('Y') ?> Student Management System. All rights reserved.</span>
+    <span>Environment: <?= ucfirst(ENVIRONMENT) ?></span>
 </footer>
