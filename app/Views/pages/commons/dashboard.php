@@ -11,7 +11,7 @@ $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good
 
 <!-- Page Header -->
 <div class="page-header">
-    <h1><?= $greeting ?>, <?= esc($name) ?> 👋</h1>
+    <h1><?= $greeting ?>, <?= esc($name) ?> </h1>
     <p>Here's what's happening in your system today.</p>
 </div>
 

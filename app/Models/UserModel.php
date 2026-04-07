@@ -6,50 +6,54 @@ use CodeIgniter\Model;
 
 class UserModel extends Model
 {
-    protected $table            = 'users';
-    protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [
+    protected $table      = 'users';
+    protected $primaryKey = 'id';
+    protected $returnType = 'array';
+
+    protected $allowedFields = [
         'name', 'fullname', 'email',
         'password', 'role_id',
-        'created_at',
-        'student_id',
-        'course', 'year_level', 'section', 'phone',
+        'student_id', 'course',
+        'year_level', 'section', 'phone',
         'address', 'profile_image',
     ];
 
-    protected bool $allowEmptyInserts = false;
-    protected bool $updateOnlyChanged = true;
-
-    protected array $casts = [];
-    protected array $castHandlers = [];
-
-    // Dates
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
 
-    // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
+    public function findByEmail(string $email): array|null
+    {
+        return $this->where('email', $email)->first();
+    }
 
-    // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
-    protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    public function getStudents(): array
+    {
+        $sql = 'SELECT users.id, users.name, users.fullname, users.email,
+                users.student_id, users.course, users.year_level,
+                users.section, users.phone, users.address,
+                users.profile_image, users.created_at,
+                roles.name AS role_name
+                FROM users
+                LEFT JOIN roles ON roles.id = users.role_id
+                WHERE roles.name = ?
+                ORDER BY users.name ASC';
+
+        return $this->db->query($sql, ['student'])->getResultArray();
+    }
+
+    public function getStudentById(int $id): array|null
+    {
+        $sql = 'SELECT users.id, users.name, users.fullname, users.email,
+                users.student_id, users.course, users.year_level,
+                users.section, users.phone, users.address,
+                users.profile_image, users.created_at,
+                roles.name AS role_name
+                FROM users
+                LEFT JOIN roles ON roles.id = users.role_id
+                WHERE users.id = ? AND roles.name = ?';
+
+        $result = $this->db->query($sql, [(int) $id, 'student']);
+        return $result->getRowArray() ?? null;
+    }
 
     public function updateProfile(int $userId, array $data): bool
     {
@@ -58,16 +62,30 @@ class UserModel extends Model
 
     public function findWithRole(int $userId): array|null
     {
-        return $this->select('users.*, roles.name AS role_name, roles.label AS role_label')
-            ->join('roles', 'roles.id = users.role_id', 'left')
-            ->find($userId);
+        $sql = 'SELECT users.id, users.name, users.fullname, users.email,
+                users.student_id, users.course, users.year_level,
+                users.section, users.phone, users.address,
+                users.profile_image, users.created_at,
+                roles.name AS role_name, roles.label AS role_label
+                FROM users
+                LEFT JOIN roles ON roles.id = users.role_id
+                WHERE users.id = ?';
+
+        $result = $this->db->query($sql, [(int) $userId]);
+        return $result->getRowArray() ?? null;
     }
 
     public function getAllWithRoles(): array
     {
-        return $this->select('users.*, roles.name AS role_name, roles.label AS role_label')
-            ->join('roles', 'roles.id = users.role_id', 'left')
-            ->orderBy('users.name', 'ASC')
-            ->findAll();
+        $sql = 'SELECT users.id, users.name, users.fullname, users.email,
+                users.student_id, users.course, users.year_level,
+                users.section, users.phone, users.address,
+                users.profile_image, users.created_at,
+                roles.name AS role_name, roles.label AS role_label
+                FROM users
+                LEFT JOIN roles ON roles.id = users.role_id
+                ORDER BY users.name ASC';
+
+        return $this->db->query($sql)->getResultArray();
     }
 }
