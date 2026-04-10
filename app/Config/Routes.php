@@ -44,14 +44,6 @@ $routes->group('', ['filter' => ['auth', 'teacher']], function ($routes) {
     $routes->delete('records/(:num)/delete',         'Records::delete/$1');
     $routes->get('records/dashboard',                'Records::dashboard');
 
-    // Computers
-    $routes->get('computers',                        'ComputerController::index');
-    $routes->get('computers/new',                    'ComputerController::new');
-    $routes->post('computers/create',                'ComputerController::create');
-    $routes->get('computers/(:num)',                 'ComputerController::show/$1');
-    $routes->get('computers/(:num)/edit',            'ComputerController::edit/$1');
-    $routes->post('computers/(:num)/update',         'ComputerController::update/$1');
-    $routes->delete('computers/(:num)/delete',       'ComputerController::delete/$1');
 });
 
 // ── Admin routes — auth|admin ─────────────────────────────────────────────────
@@ -85,4 +77,13 @@ $routes->group('admin', ['filter' => ['auth', 'admin']], function ($routes) {
     $routes->post('menu-management/create-menu-category',    'Settings::createMenuCategory');
     $routes->post('menu-management/create-menu',             'Settings::createMenu');
     $routes->post('menu-management/create-submenu',          'Settings::createSubMenu');
+});
+
+// ── API routes ────────────────────────────────────────────────────────────────
+$routes->post('api/v1/auth/token', 'Api\AuthController::issueToken');
+
+$routes->group('api/v1', ['filter' => 'api_auth'], function ($routes) {
+    $routes->delete('auth/token',        'Api\AuthController::revokeToken');
+    $routes->get('students',             'Api\StudentsController::index');
+    $routes->get('students/(:num)',      'Api\StudentsController::show/$1');
 });

@@ -10,6 +10,7 @@ use App\Filters\AuthFilter;
 use App\Filters\AdminFilter;
 use App\Filters\TeacherFilter;
 use App\Filters\StudentFilter;
+use App\Filters\ApiAuthFilter;
 use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\ForceHTTPS;
@@ -46,6 +47,7 @@ class Filters extends BaseFilters
         'admin'         => AdminFilter::class,
         'teacher'       => TeacherFilter::class,
         'student'       => StudentFilter::class,
+        'api_auth'      => ApiAuthFilter::class,
     ];
 
     /**
@@ -84,12 +86,12 @@ class Filters extends BaseFilters
             // isLoggedIn filter: Protect all routes except public authentication routes
             // Redirects unauthenticated users to home page (/)
             // Logout requires authentication to prevent user confusion
-            'isLoggedIn' => ['except' => ['/', 'register', 'login', 'unauthorized']],
+            'isLoggedIn' => ['except' => ['/', 'register', 'login', 'unauthorized', 'api/v1/*', 'api/v1/auth/token']],
             
             // isGranted filter: Check user permissions on protected routes
             // Redirects users without permission to /blocked page
             // Records, students, profile are allowed for logged-in users
-            'isGranted'  => ['except' => ['/', 'register', 'login', 'logout', 'blocked', 'unauthorized', 'dashboard', 'dashboard-v2', 'dashboard-v3', 'records', 'records/*', 'students', 'student/*', 'profile', 'profile/*']],
+            'isGranted'  => ['except' => ['/', 'register', 'login', 'logout', 'blocked', 'unauthorized', 'dashboard', 'dashboard-v2', 'dashboard-v3', 'records', 'records/*', 'students', 'student/*', 'profile', 'profile/*', 'api/v1/*', 'api/v1/auth/token']],
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
