@@ -5,9 +5,18 @@ namespace App\Controllers\Api;
 use App\Models\ApiTokenModel;
 use App\Models\UserModel;
 
+/**
+ * API Auth Controller
+ *
+ * POST   /api/v1/auth/token   → exchange email+password for a Bearer token
+ * DELETE /api/v1/auth/token   → revoke the current token (requires Bearer auth)
+ */
 class AuthController extends BaseApiController
 {
+    /** Token lifetime in seconds (default: 24 h) */
     private const TOKEN_TTL = 86400;
+
+    // ── POST /api/v1/auth/token ───────────────────────────────────────────────
 
     public function issueToken()
     {
@@ -18,7 +27,8 @@ class AuthController extends BaseApiController
             return $this->badRequest('email and password are required.');
         }
 
-        $user = (new UserModel())->findByEmail($email);
+        $userModel  = new UserModel();
+        $user       = $userModel->findByEmail($email);
 
         if (! $user || ! password_verify($password, $user['password'])) {
             return $this->response
@@ -26,8 +36,9 @@ class AuthController extends BaseApiController
                 ->setJSON(['status' => 'error', 'message' => 'Invalid credentials.']);
         }
 
-        $token     = bin2hex(random_bytes(32));
-        $expiresAt = date('Y-m-d H:i:s', time() + self::TOKEN_TTL);
+        // Generate a cryptographically secure token
+        $token          = bin2hex(random_bytes(32));   // 64-char hex string
+        $expiresAt      = date('Y-m-d H:i:s', time() + self::TOKEN_TTL);
 
         (new ApiTokenModel())->createToken($user['id'], $token, $expiresAt);
 
@@ -43,10 +54,17 @@ class AuthController extends BaseApiController
         ], 'Token issued.');
     }
 
+    // ── DELETE /api/v1/auth/token ─────────────────────────────────────────────
+
     public function revokeToken()
     {
-        $token = trim(substr($this->request->getHeaderLine('Authorization'), 7));
+        // ApiAuthFilter already validated the token and set $this->apiUser
+        $authHeader = $this->request->getHeaderLine('Authorization');
+        $token      = trim(substr($authHeader, 7));
+
         (new ApiTokenModel())->deleteByToken($token);
+
         return $this->ok(null, 'Token revoked.');
     }
 }
+    
